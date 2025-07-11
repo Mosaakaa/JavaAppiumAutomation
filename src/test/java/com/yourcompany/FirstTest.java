@@ -10,10 +10,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URL;
 import java.time.Duration;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FirstTest {
     private AppiumDriver driver;
@@ -193,31 +195,20 @@ public class FirstTest {
         waitForElementAndSendKeys(
                 By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
                 "test",
-                "cannot find search input",
+                "cannot find Search Wikipedia input",
                 15
         );
 
-        // поиск нескольких результатов поиска наверное лучше было бы сделать так: записать в переменную массив элементов и
-        // сравнить с 1цей количество записанных элементов.
-        // пока не знаю, как это реализовать, поэтому ищу 3 заголовка на странице (т.к. по условию, надо убедиться, что результатов несколько)
-
-        waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Topics referred to by the same term']"),
-                "Cannot find element 1",
-                30
+        List<WebElement> searchResults = waitForListElementsPresent(
+                By.id("org.wikipedia:id/page_list_item_title"),
+                "cannot find search results",
+                10
         );
 
-        waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Longest and original form of cricket']"),
-                "Cannot find element 2",
-                30
-        );
-
-        waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Primary male sex hormone']"),
-                "Cannot find element 3",
-                30
-        );
+        assertFalse(searchResults.isEmpty(),
+               "Search results should not be empty" );
+        assertTrue(searchResults.size()>1,
+        "search results<1");
 
         waitForElementAndClear(
                 By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
@@ -227,9 +218,10 @@ public class FirstTest {
 
         waitForElementNotPresent(
                 By.xpath("//androidx.recyclerview.widget.RecyclerView[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup[1]"),
-                "X is still present on the page",
+                "search results are still present on the page",
                 10
         );
+
     }
 
     @Test //ДЗ Ex4 Тест проверка слов в поиске
@@ -253,41 +245,21 @@ public class FirstTest {
                 15
         );
 
-        waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup[1]//*[@*[contains(., 'Java')]]"),
-                "Cannot find element 1",
-                30
+        List<WebElement> searchResults = waitForListElementsPresent(
+                By.id("org.wikipedia:id/page_list_item_title"),
+                "cannot find search results",
+                10
         );
 
-        waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup[2]//*[@*[contains(., 'Java')]]"),
-                "Cannot find element 2",
-                30
-        );
+        String searchWord = "Java";
 
-        waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup[3]//*[@*[contains(., 'Java')]]"),
-                "Cannot find element 3",
-                30
-        );
+        for (WebElement element : searchResults) {
+            String elementText = element.getText();
+            if (!elementText.contains(searchWord)) {
+                throw new AssertionError("Not all elements contains search Word");
+            }
+        };
 
-        waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup[4]//*[@*[contains(., 'Java')]]"),
-                "Cannot find element 4",
-                30
-        );
-
-        waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup[5]//*[@*[contains(., 'Java')]]"),
-                "Cannot find element 5",
-                30
-        );
-
-        waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup[6]//*[@*[contains(., 'Java')]]"),
-                "Cannot find element 6",
-                30
-        );
     }
 
 
@@ -346,6 +318,15 @@ private WebElement waitForElementAndSendKeys(By by, String value, String error_m
                 "error_message"
         );
         return element;
+    }
+
+    private List<WebElement> waitForListElementsPresent (By by, String error_message, long timeoutInSeconds)
+    {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
+        wait.withMessage(error_message + "\n");
+        return wait.until(
+                ExpectedConditions.visibilityOfAllElementsLocatedBy(by)
+        );
     }
 
 }
