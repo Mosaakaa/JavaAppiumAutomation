@@ -1,18 +1,27 @@
 package com.yourcompany;
 
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.PerformsTouchActions;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import org.junit.jupiter.api.AfterEach; // Для JUnit 5
 import org.junit.jupiter.api.BeforeEach; // Для JUnit 5
 import org.junit.jupiter.api.Test; // Для JUnit 5
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -258,7 +267,190 @@ public class FirstTest {
             if (!elementText.contains(searchWord)) {
                 throw new AssertionError("Not all elements contains search Word");
             }
-        };
+        }
+
+    }
+
+    @Test //4 урок
+    public void testSwipeArticle()
+    {
+        waitForElementAndClick(
+                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
+                "Cannot skip onboarding",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
+                "Cannot find Search Wikipedia input",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
+                "Appium",
+                "cannot find search input",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Automation for Apps']"),
+                "Cannot find 'Appium' article in search",
+                30
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/closeButton"),
+                "Cannot find close Button",
+                30
+        );
+
+        waitForElementPresent(
+                By.xpath("//android.widget.TextView[@text='Appium']"),
+                "Cannot find article title",
+                15
+        );
+
+        swipeUpToFindElement(
+                By.xpath("//android.widget.TextView[@text='View article in browser']"),
+                "Cannot find the end of the article",
+                20
+        );
+
+
+    }
+
+    @Test
+    public void saveFirstArticleToMyList()
+    {
+        waitForElementAndClick(
+                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
+                "Cannot skip onboarding",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
+                "Cannot find Search Wikipedia input",
+                5
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
+                "Java",
+                "cannot find search input",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
+                "Cannot find Search Wikipedia input",
+                30
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/closeButton"),
+                "Cannot find close Button",
+                30
+        );
+
+        waitForElementPresent(
+                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
+                "Cannot find article title",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@content-desc='Save']"),
+                "Cannot find button to save article",
+                5
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/snackbar_action"),
+                "Cannot find option to add article to reading list",
+                15
+        );
+
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/text_input"),
+                "Learning programming",
+                "Cannot put text into articles folder input",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='OK']"),
+                "Cannot press 'OK' button",
+                15
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/snackbar_action"),
+                "Cannot find option to add article to reading list",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='Got it']"),
+                "Cannot find close button",
+                10
+        );
+
+        swipeElementToLeft(
+                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
+                "Cannot find saved article"
+        );
+
+        waitForElementNotPresent(
+                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
+                "Cannot delete savewd article",
+                5
+        );
+
+    }
+
+    @Test
+    public void testAmountOfNotEmptySearch()
+    {
+        waitForElementAndClick(
+                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
+                "Cannot skip onboarding",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
+                "Cannot find Search Wikipedia input",
+                5
+        );
+
+        String search_line = "Linkin Park Discography";
+
+        waitForElementAndSendKeys(
+                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
+                search_line,
+                "cannot find search input",
+                5
+        );
+
+        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup";
+
+        waitForElementPresent(
+                By.xpath(search_result_locator),
+                "Cannot find anything by the request" + search_line,
+                15
+        );
+
+        int amount_of_search_results = getAmountOfElements(
+                By.xpath(search_result_locator)
+        );
+
+        assertTrue(
+                amount_of_search_results > 0,
+                "We found too few results!"
+        );
+
 
     }
 
@@ -328,5 +520,91 @@ private WebElement waitForElementAndSendKeys(By by, String value, String error_m
                 ExpectedConditions.visibilityOfAllElementsLocatedBy(by)
         );
     }
+
+    protected void swipeUp(int timeOfSwipe) {
+        // Получаем размеры экрана
+        Dimension size = driver.manage().window().getSize();
+        int x = size.width / 2;
+        int startY = (int) (size.height * 0.8);
+        int endY = (int) (size.height * 0.2);
+
+        // Создаем объект PointerInput для имитации касания
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence swipe = new Sequence(finger, 0)
+                .addAction(finger.createPointerMove(Duration.ZERO,
+                        PointerInput.Origin.viewport(), x, startY))
+                .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                .addAction(finger.createPointerMove(Duration.ofMillis(timeOfSwipe + 100),
+                        PointerInput.Origin.viewport(), x, endY))
+                .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+        // Выполняем свайп
+        driver.perform(Collections.singletonList(swipe));
+    }
+
+    protected void swipeUpQuick()
+    {
+        swipeUp(200);
+    }
+
+    protected void swipeUpToFindElement(By by, String error_message, int max_swipes)
+    {
+        int already_swiped = 0;
+        while (driver.findElements(by).size() == 0){
+
+            if (already_swiped > max_swipes){
+                waitForElementPresent(by, "Cannot find element by swiping up. \n" + error_message, 0);
+                return;
+            }
+
+            swipeUpQuick();
+            ++ already_swiped;
+        }
+
+    }
+
+    protected void swipeElementToLeft (By by, String error_message)
+    {
+        WebElement element = waitForElementPresent(
+                by,
+                error_message,
+                10);
+
+        int left_x = element.getLocation().getX();
+        int right_x = left_x + element.getSize().getWidth();
+        int upper_y = element.getLocation().getY();
+        int lower_y = upper_y + element.getSize().getHeight();
+        int middle_y = (upper_y + lower_y) / 2;
+
+        // Создаем последовательность действий
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        Sequence swipe = new Sequence(finger, 0);
+
+        // 1. Перемещаем палец в начальную позицию
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(0),
+                PointerInput.Origin.viewport(), right_x, middle_y));
+        // 2. Нажимаем пальцем на экран
+        swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
+
+        // 4. Перемещаем палец в конечную позицию
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(200),
+                PointerInput.Origin.viewport(), left_x, middle_y));
+
+        // 5. Отжимаем палец от экрана
+        swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+
+        // Выполняем последовательность действий
+        driver.perform(Collections.singletonList(swipe));
+
+    }
+
+    private int getAmountOfElements(By by)
+    {
+        List elements = driver.findElements(by);
+        return elements.size();
+    }
+
+
+
 
 }
