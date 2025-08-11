@@ -1,22 +1,18 @@
 package com.yourcompany;
 
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.PerformsTouchActions;
-import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.touch.WaitOptions;
-import io.appium.java_client.touch.offset.PointOption;
-import org.junit.jupiter.api.AfterEach; // Для JUnit 5
-import org.junit.jupiter.api.BeforeEach; // Для JUnit 5
-import org.junit.jupiter.api.Test; // Для JUnit 5
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Wait;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
@@ -454,6 +450,118 @@ public class FirstTest {
 
     }
 
+    @Test
+    public void testAmountOfEmptySearch()
+    {
+        waitForElementAndClick(
+                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
+                "Cannot skip onboarding",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
+                "Cannot find Search Wikipedia input",
+                5
+        );
+
+        String search_line = "ghghgh";
+
+        waitForElementAndSendKeys(
+                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
+                search_line,
+                "cannot find search input",
+                5
+        );
+
+        String empty_result_label = "//androidx.recyclerview.widget.RecyclerView[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup";
+
+                waitForElementPresent(
+                By.xpath(empty_result_label),
+                "Cannot find empty result by the request" + search_line,
+                15
+        );
+
+        assertElementNotPresent(
+                By.xpath(empty_result_label),
+                "We found same results by request" + search_line
+        );
+    }
+
+    @Test
+    public void testChangeScreenOrientationOnSearchResults()
+    {
+        waitForElementAndClick(
+                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
+                "Cannot skip onboarding",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
+                "Cannot find Search Wikipedia input",
+                15
+        );
+
+        String search_line = "Java";
+
+        waitForElementAndSendKeys(
+                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
+                search_line,
+                "cannot find search input",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
+                "Cannot find 'Object-oriented programming language' topic searching by" + search_line,
+                30
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/closeButton"),
+                "Cannot find close Button",
+                30
+        );
+
+        String title_before_rotation = waitForeElementAndGetAttribute(
+                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
+                "text",
+                "Cannot find title of article",
+                15
+        );
+
+        ((AndroidDriver) driver).rotate(ScreenOrientation.LANDSCAPE);
+
+        String title_after_rotation = waitForeElementAndGetAttribute(
+                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
+                "text",
+                "Cannot find title of article",
+                15
+        );
+
+        assertEquals(
+                title_before_rotation,
+                title_after_rotation,
+                "Unexpected title after rotation"
+        );
+
+        ((AndroidDriver) driver).rotate(ScreenOrientation.PORTRAIT);
+
+        String title_after_second_rotation = waitForeElementAndGetAttribute(
+                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
+                "text",
+                "Cannot find title of article",
+                15
+        );
+
+        assertEquals(
+                title_before_rotation,
+                title_after_second_rotation,
+                "Unexpected title after rotation"
+        );
+    }
+
 
 private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds)
 {
@@ -602,6 +710,22 @@ private WebElement waitForElementAndSendKeys(By by, String value, String error_m
     {
         List elements = driver.findElements(by);
         return elements.size();
+    }
+
+    private void assertElementNotPresent(By by, String error_message)
+    {
+        int amount_of_elements = getAmountOfElements(by);
+        if (amount_of_elements > 1) {
+            String default_message = "An element '" + by.toString() + "' supposed to be not present";
+            throw new AssertionError(default_message + " " + error_message);
+
+        }
+    }
+
+    private String waitForeElementAndGetAttribute(By by, String attribute, String error_message, long timeoutInSeconds)
+    {
+        WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
+        return element.getAttribute(attribute);
     }
 
 
