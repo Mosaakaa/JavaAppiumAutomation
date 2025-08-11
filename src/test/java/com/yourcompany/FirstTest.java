@@ -38,6 +38,8 @@ public class FirstTest {
         capabilities.setCapability("app", "C:/Users/Tkachenko.EA3/Desktop/JavaAppiumAutomation/JavaAppiumAutomation/apks/org_wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://10.10.243.106:4723"), capabilities);
+
+        ((AndroidDriver) driver).rotate(ScreenOrientation.PORTRAIT); // ДЗ Ex7*: Поворот экрана - надо сделать так, чтобы все тесты начинались с портретной ориентации экрана
     }
 
     @AfterEach
