@@ -602,6 +602,51 @@ public class FirstTest {
 
     }
 
+    @Test //ДЗ Ex6 Тест assert title
+    public void testArticleTitleIsPresent()
+    {
+        waitForElementAndClick(
+                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
+                "Cannot skip onboarding",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
+                "Cannot find Search Wikipedia input",
+                5
+        );
+
+        String search_line = "java";
+
+        waitForElementAndSendKeys(
+                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
+                search_line,
+                "cannot find search input",
+                30
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
+                "Cannot find 'Object-oriented programming language' topic searching by" + search_line,
+                30
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/closeButton"),
+                "Cannot find close Button",
+                30
+        );
+
+        assertElementPresent(
+                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
+                "Cannot find title of article",
+                30);
+
+
+    }
+
+
 
 
 
@@ -768,6 +813,18 @@ private WebElement waitForElementAndSendKeys(By by, String value, String error_m
     {
         WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
         return element.getAttribute(attribute);
+    }
+
+    private void assertElementPresent(By by, String error_message, long timeoutInSeconds) //ДЗ Ex6 Тест assert title
+    {
+        boolean article_title_is_not_present = driver.findElements(by).isEmpty();
+
+        if (article_title_is_not_present) {
+            String default_message = "An element '" + by.toString() + "' supposed to be present";
+            throw new AssertionError(default_message + " " + error_message);
+        }
+
+
     }
 
 
