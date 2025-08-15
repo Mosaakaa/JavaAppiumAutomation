@@ -646,6 +646,164 @@ public class FirstTest {
 
     }
 
+    @Test
+    public void saveTwoArticleToMyList() //ДЗ Ex5 Тест сохранение двух статей.txt
+    {
+        waitForElementAndClick(
+                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
+                "Cannot skip onboarding",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
+                "Cannot find Search Wikipedia input",
+                30
+        );
+
+        waitForElementAndSendKeys(
+                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
+                "Java",
+                "cannot find search input",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
+                "Cannot find Search Wikipedia input",
+                30
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/closeButton"),
+                "Cannot find close Button",
+                30
+        );
+
+        waitForElementPresent(
+                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
+                "Cannot find article title",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@content-desc='Save']"),
+                "Cannot find button to save article",
+                5
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/page_toolbar_button_search"),
+                "Cannot find Search Wikipedia input on article page",
+                15
+        );
+
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                "appium",
+                "Cannot find Search Wikipedia input on article page",
+                30
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@resource-id='org.wikipedia:id/page_list_item_description' and @text='Automation for Apps']"),
+                "Cannot find Search Wikipedia input",
+                30
+        );
+
+        waitForElementPresent(
+                By.xpath("//android.widget.TextView[@text='Automation for Apps']"),
+                "Cannot find article title",
+                15
+        );
+
+        String title_before_saved = waitForeElementAndGetAttribute(
+                By.xpath("(//android.widget.TextView[@text='Appium'])[1]"),
+                "text",
+                "Cannot find title of article",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@content-desc='Save']"),
+                "Cannot find button to save article",
+                5
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/page_toolbar_button_show_overflow_menu"),
+                "Cannot find toolbar button",
+                15
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/page_explore"),
+                "Cannot find explore button",
+                15
+        );
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/main_toolbar"),
+                "Cannot see main page",
+                15
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/nav_tab_reading_lists"),
+                "Cannot find saved-page button",
+                15
+        );
+
+        waitForElementPresent(
+                By.xpath("(//android.widget.TextView[@text='Saved'])"),
+                "Cannot see saved page",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//androidx.recyclerview.widget.RecyclerView[@resource-id='org.wikipedia:id/recycler_view']/android.view.ViewGroup"),
+                "Cannot find saved group button",
+                15
+        );
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/buttonView"),
+                "Cannot find skiped onboarding button",
+                15
+        );
+
+        swipeElementToLeft(
+                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
+                "Cannot find saved article"
+        );
+
+        waitForElementPresent(
+                By.xpath("//android.widget.TextView[@resource-id='org.wikipedia:id/page_list_item_title'] and @text='Appium']"),
+                "Cannot find article button",
+                15
+        );
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@resource-id='org.wikipedia:id/page_list_item_title'] and @text='Appium']"),
+                "Cannot find article button",
+                15
+        );
+
+        String title_after_saved = waitForeElementAndGetAttribute(
+                By.xpath("(//android.widget.TextView[@text='Appium'])[1]"),
+                "text",
+                "Cannot find title of article",
+                30
+        );
+
+        assertEquals(
+                title_before_saved,
+                title_after_saved,
+                "Unexpected title after saved"
+        );
+
+    }
+
 
 
 
@@ -781,8 +939,12 @@ private WebElement waitForElementAndSendKeys(By by, String value, String error_m
         // 2. Нажимаем пальцем на экран
         swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 
+        // 3. Держим палец на месте чуть-чуть (имитация long press перед свайпом)
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(200), //свайп считывался как тап, добавила задержку для "медленного" свайпа
+                PointerInput.Origin.viewport(), right_x, middle_y));
+
         // 4. Перемещаем палец в конечную позицию
-        swipe.addAction(finger.createPointerMove(Duration.ofMillis(200),
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(500),
                 PointerInput.Origin.viewport(), left_x, middle_y));
 
         // 5. Отжимаем палец от экрана
