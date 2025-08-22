@@ -1,9 +1,7 @@
 package com.yourcompany;
 
-import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import lib.CoreTestCase;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -11,71 +9,45 @@ import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.net.URL;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FirstTest {
-    private AppiumDriver driver;
+public class FirstTest extends CoreTestCase {
 
-    @BeforeEach
-    public void setUp() throws Exception {
+    @Test
+    public void testSearch() {
+        waitForElementAndClick(
+                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
+                "Cannot skip onboarding",
+                5
+        );
 
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.setCapability("platformName", "Android");
-        capabilities.setCapability("appium:deviceName", "emulator-5554");
-        capabilities.setCapability("appium:platformVersion", "13");
-        capabilities.setCapability("appium:automationName", "UiAutomator2");
-        capabilities.setCapability("appium:appPackage", "org.wikipedia");
-        capabilities.setCapability("appium:appActivity", ".main.MainActivity");
-        capabilities.setCapability("app", "C:/Users/Tkachenko.EA3/Desktop/JavaAppiumAutomation/JavaAppiumAutomation/apks/org_wikipedia.apk");
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
+                "Cannot find Search Wikipedia input",
+                5
+        );
 
-        driver = new AndroidDriver(new URL("http://10.10.243.106:4723"), capabilities);
+        waitForElementAndSendKeys(
+                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
+                "Java",
+                "cannot find search input",
+                5
+        );
 
-        ((AndroidDriver) driver).rotate(ScreenOrientation.PORTRAIT); // ДЗ Ex7*: Поворот экрана - надо сделать так, чтобы все тесты начинались с портретной ориентации экрана
+        waitForElementPresent(
+                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
+                "Cannot find 'Object-oriented programming language' topic searching by 'java'",
+                15
+        );
     }
 
-    @AfterEach
-    public void tearDown() {
-        driver.quit();
-    }
-
-
-//    @Test
-//    public void firstTest() {
-//        waitForElementAndClick(
-//                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-//                "Cannot skip onboarding",
-//                5
-//        );
-//
-//        waitForElementAndClick(
-//                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-//                "Cannot find Search Wikipedia input",
-//                5
-//        );
-//
-//        waitForElementAndSendKeys(
-//                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-//                "Java",
-//                "cannot find search input",
-//                5
-//        );
-//
-//        waitForElementPresent(
-//                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
-//                "Cannot find 'Object-oriented programming language' topic searching by 'java'",
-//                15
-//        );
-//    }
-//
     @Test
     public void testCancelSearch()
     {
@@ -319,7 +291,7 @@ public class FirstTest {
     }
 
     @Test
-    public void saveFirstArticleToMyList()
+    public void testSaveFirstArticleToMyList()
     {
         waitForElementAndClick(
                 By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
@@ -647,7 +619,7 @@ public class FirstTest {
     }
 
     @Test
-    public void saveTwoArticleToMyList() //ДЗ Ex5 Тест сохранение двух статей.txt
+    public void testSaveTwoArticleToMyList() //ДЗ Ex5 Тест сохранение двух статей.txt
     {
         waitForElementAndClick(
                 By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
