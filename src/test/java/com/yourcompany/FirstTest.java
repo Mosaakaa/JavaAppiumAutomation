@@ -661,15 +661,19 @@ public class FirstTest {
                 30
         );
 
+        String search_input = "//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']";
+
         waitForElementAndSendKeys(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
+                By.xpath(search_input),
                 "Java",
                 "cannot find search input",
                 15
         );
 
+        String java_article_search_result = "//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']";
+
         waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
+                By.xpath(java_article_search_result),
                 "Cannot find Search Wikipedia input",
                 30
         );
@@ -680,14 +684,18 @@ public class FirstTest {
                 30
         );
 
+        String java_article_title = "//android.widget.TextView[@text='Java (programming language)']";
+
         waitForElementPresent(
-                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
+                By.xpath(java_article_title),
                 "Cannot find article title",
                 15
         );
 
+        String save_button = "//android.widget.TextView[@content-desc='Save']";
+
         waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@content-desc='Save']"),
+                By.xpath(save_button),
                 "Cannot find button to save article",
                 5
         );
@@ -699,33 +707,37 @@ public class FirstTest {
         );
 
         waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
+                By.xpath(search_input),
                 "appium",
                 "Cannot find Search Wikipedia input on article page",
                 30
         );
 
+        String appium_article_search_result = "//android.widget.TextView[@resource-id='org.wikipedia:id/page_list_item_description' and @text='Automation for Apps']";
+
         waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@resource-id='org.wikipedia:id/page_list_item_description' and @text='Automation for Apps']"),
+                By.xpath(appium_article_search_result),
                 "Cannot find Search Wikipedia input",
                 30
         );
 
+        String appium_article_title = "(//android.widget.TextView[@text='Appium'])[1]";
+
         waitForElementPresent(
-                By.xpath("//android.widget.TextView[@text='Automation for Apps']"),
+                By.xpath(appium_article_title),
                 "Cannot find article title",
                 15
         );
 
         String title_before_saved = waitForeElementAndGetAttribute(
-                By.xpath("(//android.widget.TextView[@text='Appium'])[1]"),
+                By.xpath(appium_article_title),
                 "text",
                 "Cannot find title of article",
                 15
         );
 
         waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@content-desc='Save']"),
+                By.xpath(save_button),
                 "Cannot find button to save article",
                 5
         );
@@ -773,24 +785,18 @@ public class FirstTest {
         );
 
         swipeElementToLeft(
-                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
+                By.xpath(java_article_title),
                 "Cannot find saved article"
         );
 
-        waitForElementPresent(
-                By.xpath("//android.widget.TextView[@resource-id='org.wikipedia:id/page_list_item_title'] and @text='Appium']"),
-                "Cannot find article button",
-                15
-        );
-
         waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@resource-id='org.wikipedia:id/page_list_item_title'] and @text='Appium']"),
+                By.xpath(appium_article_title),
                 "Cannot find article button",
                 15
         );
 
         String title_after_saved = waitForeElementAndGetAttribute(
-                By.xpath("(//android.widget.TextView[@text='Appium'])[1]"),
+                By.xpath(appium_article_title),
                 "text",
                 "Cannot find title of article",
                 30
@@ -940,11 +946,11 @@ private WebElement waitForElementAndSendKeys(By by, String value, String error_m
         swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
 
         // 3. Держим палец на месте чуть-чуть (имитация long press перед свайпом)
-        swipe.addAction(finger.createPointerMove(Duration.ofMillis(200), //свайп считывался как тап, добавила задержку для "медленного" свайпа
-                PointerInput.Origin.viewport(), right_x, middle_y));
+       // swipe.addAction(finger.createPointerMove(Duration.ofMillis(200), //свайп считывался как тап, добавила задержку для "медленного" свайпа
+              //  PointerInput.Origin.viewport(), right_x, middle_y));
 
         // 4. Перемещаем палец в конечную позицию
-        swipe.addAction(finger.createPointerMove(Duration.ofMillis(500),
+        swipe.addAction(finger.createPointerMove(Duration.ofMillis(700),
                 PointerInput.Origin.viewport(), left_x, middle_y));
 
         // 5. Отжимаем палец от экрана
