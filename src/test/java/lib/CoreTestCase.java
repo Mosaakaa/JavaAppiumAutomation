@@ -14,7 +14,7 @@ public class CoreTestCase {
     private static String AppiumURL = "http://10.10.243.106:4723";
 
     @BeforeEach
-    public void setUp() throws Exception {
+    protected void setUp() throws Exception {
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("platformName", "Android");
@@ -31,7 +31,7 @@ public class CoreTestCase {
     }
 
     @AfterEach
-    public void tearDown() {
+    protected void tearDown() {
         driver.quit();
     }
 }
