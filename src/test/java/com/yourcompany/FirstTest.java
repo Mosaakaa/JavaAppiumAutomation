@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
+import ui.ArticlePageObject;
 import ui.MainPageObject;
 import ui.SearchPageObject;
 
@@ -54,44 +55,17 @@ public class FirstTest extends CoreTestCase {
     @Test
     public void testCompareArticleTitle()
     {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-                "Cannot find Search Wikipedia input",
-                5
-        );
+        SearchPageObject.skipOnboarding();
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Java");
+        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
 
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-                "Java",
-                "cannot find search input",
-                15
-        );
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
-                "Cannot find Search Wikipedia input",
-                30
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/closeButton"),
-                "Cannot find close Button",
-                30
-        );
-
-        WebElement title_element = MainPageObject.waitForElementPresent(
-                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
-                "Cannot find article title",
-                15
-        );
-
-        String article_title = title_element.getAttribute("text");
+        ArticlePageObject.skipArticleOnboarding();
+        String article_title = ArticlePageObject.getArticleTitle();
 
         assertEquals(
                 "Java (programming language)",
@@ -205,49 +179,18 @@ public class FirstTest extends CoreTestCase {
     @Test //4 урок
     public void testSwipeArticle()
     {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-                "Cannot find Search Wikipedia input",
-                5
-        );
+        SearchPageObject.skipOnboarding();
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Appium");
+        SearchPageObject.clickByArticleWithSubstring("Appium");
 
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-                "Appium",
-                "cannot find search input",
-                15
-        );
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Automation for Apps']"),
-                "Cannot find 'Appium' article in search",
-                30
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/closeButton"),
-                "Cannot find close Button",
-                30
-        );
-
-        MainPageObject.waitForElementPresent(
-                By.xpath("//android.widget.TextView[@text='Appium']"),
-                "Cannot find article title",
-                15
-        );
-
-        MainPageObject.swipeUpToFindElement(
-                By.xpath("//android.widget.TextView[@text='View article in browser']"),
-                "Cannot find the end of the article",
-                20
-        );
-
+        ArticlePageObject.skipArticleOnboarding();
+        ArticlePageObject.waitForTitleElement();
+        ArticlePageObject.swipeToFooter();
 
     }
 
