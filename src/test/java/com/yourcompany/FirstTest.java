@@ -9,6 +9,7 @@ import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 import ui.ArticlePageObject;
 import ui.MainPageObject;
+import ui.MyListsPageObject;
 import ui.SearchPageObject;
 
 import java.time.Duration;
@@ -197,90 +198,24 @@ public class FirstTest extends CoreTestCase {
     @Test
     public void testSaveFirstArticleToMyList()
     {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-                "Cannot find Search Wikipedia input",
-                5
-        );
+        SearchPageObject.skipOnboarding();
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Java");
+        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
 
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-                "Java",
-                "cannot find search input",
-                15
-        );
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
-                "Cannot find Search Wikipedia input",
-                30
-        );
+        ArticlePageObject.skipArticleOnboarding();
+        ArticlePageObject.waitForTitleElement();
+        String article_title = ArticlePageObject.getArticleTitle();
+        String name_of_folder = "Learning programming";
+        ArticlePageObject.addArticleToMyList(name_of_folder);
 
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/closeButton"),
-                "Cannot find close Button",
-                30
-        );
+        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
 
-        MainPageObject.waitForElementPresent(
-                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
-                "Cannot find article title",
-                15
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@content-desc='Save']"),
-                "Cannot find button to save article",
-                5
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/snackbar_action"),
-                "Cannot find option to add article to reading list",
-                15
-        );
-
-        MainPageObject.waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/text_input"),
-                "Learning programming",
-                "Cannot put text into articles folder input",
-                5
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@text='OK']"),
-                "Cannot press 'OK' button",
-                15
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/snackbar_action"),
-                "Cannot find option to add article to reading list",
-                15
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@text='Got it']"),
-                "Cannot find close button",
-                10
-        );
-
-        MainPageObject.swipeElementToLeft(
-                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
-                "Cannot find saved article"
-        );
-
-        MainPageObject.waitForElementNotPresent(
-                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
-                "Cannot delete savewd article",
-                5
-        );
+        MyListsPageObject.swipeByArticleToDelete(article_title);
 
     }
 
