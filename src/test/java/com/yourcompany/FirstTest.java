@@ -222,83 +222,31 @@ public class FirstTest extends CoreTestCase {
     @Test
     public void testAmountOfNotEmptySearch()
     {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-                "Cannot find Search Wikipedia input",
-                5
-        );
-
+        SearchPageObject.skipOnboarding();
+        SearchPageObject.initSearchInput();
         String search_line = "Linkin Park Discography";
-
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-                search_line,
-                "cannot find search input",
-                5
-        );
-
-        String search_result_locator = "//*[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup";
-
-        MainPageObject.waitForElementPresent(
-                By.xpath(search_result_locator),
-                "Cannot find anything by the request" + search_line,
-                15
-        );
-
-        int amount_of_search_results = MainPageObject.getAmountOfElements(
-                By.xpath(search_result_locator)
-        );
+        SearchPageObject.typeSearchLine(search_line);
+        int amount_of_search_results = SearchPageObject.getAmountOfFoundArticles();
 
         assertTrue(
                 amount_of_search_results > 0,
                 "We found too few results!"
         );
-
-
     }
 
     @Test
     public void testAmountOfEmptySearch()
     {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-                "Cannot find Search Wikipedia input",
-                5
-        );
-
+        SearchPageObject.skipOnboarding();
+        SearchPageObject.initSearchInput();
         String search_line = "ghghgh";
-
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-                search_line,
-                "cannot find search input",
-                5
-        );
-
-        String empty_result_label = "//androidx.recyclerview.widget.RecyclerView[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup";
-
-        MainPageObject.waitForElementPresent(
-                By.xpath(empty_result_label),
-                "Cannot find empty result by the request" + search_line,
-                15
-        );
-
-        MainPageObject.assertElementNotPresent(
-                By.xpath(empty_result_label),
-                "We found same results by request" + search_line
-        );
+        SearchPageObject.typeSearchLine(search_line);
+        SearchPageObject.waitForEmptyResultsLabel();
+        SearchPageObject.assertThereIsNoResultOfSearch();
     }
 
     @Test
