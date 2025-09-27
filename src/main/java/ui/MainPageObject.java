@@ -12,6 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class MainPageObject {
 
@@ -58,8 +59,6 @@ public class MainPageObject {
         element.clear();
         return element;
     }
-
-
 
     public List<WebElement> waitForListElementsPresent(By by, String error_message, long timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
@@ -174,5 +173,16 @@ public class MainPageObject {
             String default_message = "An element '" + by.toString() + "' supposed to be present";
             throw new AssertionError(default_message + " " + error_message);
         }
+    }
+
+    private WebElement assertElementHasText(By by, String expected_text, String error_message, long timeoutInSeconds) {
+        WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
+        String expectedText = element.getAttribute("text");
+
+        if (!Objects.equals(expectedText, expected_text)) {
+            String default_message = "An element '" + by.toString() + "' has not expected text";
+            throw new AssertionError(default_message + " " + error_message);
+
+        return element;
     }
 }

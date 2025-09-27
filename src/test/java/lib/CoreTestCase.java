@@ -8,6 +8,7 @@ import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import java.net.URL;
+import java.time.Duration;
 
 public class CoreTestCase {
     protected AppiumDriver driver;
@@ -26,12 +27,26 @@ public class CoreTestCase {
         capabilities.setCapability("app", "C:/Users/Tkachenko.EA3/Desktop/JavaAppiumAutomation/JavaAppiumAutomation/apks/org_wikipedia.apk");
 
         driver = new AndroidDriver(new URL(AppiumURL), capabilities);
-
-        ((AndroidDriver) driver).rotate(ScreenOrientation.PORTRAIT); // ДЗ Ex7*: Поворот экрана - надо сделать так, чтобы все тесты начинались с портретной ориентации экрана
+        this.rotateScreenPortrait();
     }
 
     @AfterEach
     protected void tearDown() {
         driver.quit();
+    }
+
+    protected void rotateScreenPortrait()
+    {
+        ((AndroidDriver) driver).rotate(ScreenOrientation.PORTRAIT);
+    }
+
+    protected void rotateScreenLandscape()
+    {
+        ((AndroidDriver) driver).rotate(ScreenOrientation.LANDSCAPE);
+    }
+
+    protected void backgroundApp(int seconds)
+    {
+        ((AndroidDriver) driver).runAppInBackground(Duration.ofSeconds(seconds));
     }
 }
