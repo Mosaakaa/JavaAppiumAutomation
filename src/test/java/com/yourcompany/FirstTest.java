@@ -1,88 +1,26 @@
 package com.yourcompany;
 
-import io.appium.java_client.android.AndroidDriver;
 import lib.CoreTestCase;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 import ui.ArticlePageObject;
 import ui.MainPageObject;
 import ui.MyListsPageObject;
 import ui.SearchPageObject;
 
-import java.time.Duration;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FirstTest extends CoreTestCase {
 
-    private MainPageObject MainPageObject;
-
-    @BeforeEach
-    protected void setUp() throws Exception
-    {
-        super.setUp();
-        MainPageObject = new MainPageObject(driver);
-    }
-
-    @Test
-    public void testSearch()
-    {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.skipOnboarding();
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.waitForSearchResult("Object-oriented programming language");
-    }
-
-    @Test
-    public void testCancelSearch()
-    {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.skipOnboarding();
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.waitForCancelButtonToAppear();
-        SearchPageObject.clickCancelSearch();
-        SearchPageObject.waitForCancelButtonToDisappear();
-
-    }
-
-    @Test
-    public void testCompareArticleTitle()
-    {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.skipOnboarding();
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
-
-        ArticlePageObject.skipArticleOnboarding();
-        String article_title = ArticlePageObject.getArticleTitle();
-
-        assertEquals(
-                "Java (programming language)",
-                article_title,
-                "We see unexpected title!"
-        );
-    }
-
     @Test //дз Ex2 Создание метода
     public void testSearchInputHasAText()
     {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
+
+        SearchPageObject.skipOnboarding();
 
         assertElementHasText(
                 By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
@@ -177,190 +115,11 @@ public class FirstTest extends CoreTestCase {
 
     }
 
-    @Test //4 урок
-    public void testSwipeArticle()
-    {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
 
-        SearchPageObject.skipOnboarding();
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Appium");
-        SearchPageObject.clickByArticleWithSubstring("Appium");
 
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
 
-        ArticlePageObject.skipArticleOnboarding();
-        ArticlePageObject.waitForTitleElement();
-        ArticlePageObject.swipeToFooter();
 
-    }
-
-    @Test
-    public void testSaveFirstArticleToMyList()
-    {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.skipOnboarding();
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
-
-        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
-
-        ArticlePageObject.skipArticleOnboarding();
-        ArticlePageObject.waitForTitleElement();
-        String article_title = ArticlePageObject.getArticleTitle();
-        String name_of_folder = "Learning programming";
-        ArticlePageObject.addArticleToMyList(name_of_folder);
-
-        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
-
-        MyListsPageObject.swipeByArticleToDelete(article_title);
-
-    }
-
-    @Test
-    public void testAmountOfNotEmptySearch()
-    {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.skipOnboarding();
-        SearchPageObject.initSearchInput();
-        String search_line = "Linkin Park Discography";
-        SearchPageObject.typeSearchLine(search_line);
-        int amount_of_search_results = SearchPageObject.getAmountOfFoundArticles();
-
-        assertTrue(
-                amount_of_search_results > 0,
-                "We found too few results!"
-        );
-    }
-
-    @Test
-    public void testAmountOfEmptySearch()
-    {
-        SearchPageObject SearchPageObject = new SearchPageObject(driver);
-
-        SearchPageObject.skipOnboarding();
-        SearchPageObject.initSearchInput();
-        String search_line = "ghghgh";
-        SearchPageObject.typeSearchLine(search_line);
-        SearchPageObject.waitForEmptyResultsLabel();
-        SearchPageObject.assertThereIsNoResultOfSearch();
-    }
-
-    @Test
-    public void testChangeScreenOrientationOnSearchResults()
-    {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-                "Cannot find Search Wikipedia input",
-                15
-        );
-
-        String search_line = "Java";
-
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-                search_line,
-                "cannot find search input",
-                15
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
-                "Cannot find 'Object-oriented programming language' topic searching by" + search_line,
-                30
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/closeButton"),
-                "Cannot find close Button",
-                30
-        );
-
-        String title_before_rotation = MainPageObject.waitForeElementAndGetAttribute(
-                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
-                "text",
-                "Cannot find title of article",
-                15
-        );
-
-        ((AndroidDriver) driver).rotate(ScreenOrientation.LANDSCAPE);
-
-        String title_after_rotation = MainPageObject.waitForeElementAndGetAttribute(
-                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
-                "text",
-                "Cannot find title of article",
-                15
-        );
-
-        assertEquals(
-                title_before_rotation,
-                title_after_rotation,
-                "Unexpected title after rotation"
-        );
-
-        ((AndroidDriver) driver).rotate(ScreenOrientation.PORTRAIT);
-
-        String title_after_second_rotation = MainPageObject.waitForeElementAndGetAttribute(
-                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
-                "text",
-                "Cannot find title of article",
-                15
-        );
-
-        assertEquals(
-                title_before_rotation,
-                title_after_second_rotation,
-                "Unexpected title after rotation"
-        );
-    }
-
-    @Test
-    public void testCheckSearchArticleInBackground()
-    {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-                "Cannot find Search Wikipedia input",
-                5
-        );
-
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-                "Java",
-                "cannot find search input",
-                15
-        );
-
-        MainPageObject.waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
-                "Cannot find Search Wikipedia input",
-                30
-        );
-
-        ((AndroidDriver) driver).runAppInBackground(Duration.ofSeconds(2));
-
-        MainPageObject.waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
-                "Cannot find article after returning background",
-                30
-        );
-
-    }
-
+    
     @Test //ДЗ Ex6 Тест assert title
     public void testArticleTitleIsPresent()
     {
