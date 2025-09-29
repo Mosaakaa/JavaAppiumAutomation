@@ -33,24 +33,11 @@ public class FirstTest extends CoreTestCase {
     @Test //дз Ex3: Тест: отмена поиска
     public void testFindSearchResultAndEndSurch()
     {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-                "Cannot find Search Wikipedia input",
-                5
-        );
-
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-                "test",
-                "cannot find Search Wikipedia input",
-                15
-        );
+        SearchPageObject.skipOnboarding();
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Java");
 
         List<WebElement> searchResults = MainPageObject.waitForListElementsPresent(
                 By.id("org.wikipedia:id/page_list_item_title"),
