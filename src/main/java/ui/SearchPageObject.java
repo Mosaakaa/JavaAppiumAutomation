@@ -1,7 +1,11 @@
 package ui;
 
 import io.appium.java_client.AppiumDriver;
+import net.bytebuddy.asm.Advice;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import java.util.List;
 
 public class SearchPageObject extends MainPageObject{
 
@@ -12,7 +16,8 @@ public class SearchPageObject extends MainPageObject{
             SEARCH_CANCEL_BUTTON = "//android.widget.ImageButton[@content-desc='Navigate up']",
             SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='{SUBSTRING}']",
             SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup",
-            SEARCH_EMPTY_RESULT_ELEMENT = "//androidx.recyclerview.widget.RecyclerView[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup";
+            SEARCH_EMPTY_RESULT_ELEMENT = "//androidx.recyclerview.widget.RecyclerView[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup",
+            SEARCH_RESULT_TITLE = "org.wikipedia:id/page_list_item_title";
 
     public SearchPageObject(AppiumDriver driver)
     {
@@ -88,5 +93,39 @@ public class SearchPageObject extends MainPageObject{
     public void assertThereIsNoResultOfSearch()
     {
         this.assertElementNotPresent(By.xpath(SEARCH_RESULT_ELEMENT), "We supposed not to find any results");
+    }
+
+    public void assertThereIsHaveResultOfSearch()
+    {
+        this.assertElementPresent(By.xpath(SEARCH_RESULT_ELEMENT), "We supposed to find any results", 15);
+    }
+
+    public List waitForListElementSearchResult()
+    {
+        this.waitForListElementsPresent(
+                By.id(SEARCH_RESULT_TITLE),
+                "cannot find search results",
+                10
+        );
+
+        return this.waitForListElementSearchResult();
+    }
+
+    public void waitForClearSearchResult()
+    {
+        this.waitForElementAndClear(
+                By.xpath(SEARCH_INPUT),
+                "cannot find search input",
+                10
+        );
+    }
+
+    public void searchResultIsNotPresent()
+    {
+        this.waitForElementNotPresent(
+                By.xpath(SEARCH_EMPTY_RESULT_ELEMENT),
+                "search results are still present on the page",
+                10
+        );
     }
 }

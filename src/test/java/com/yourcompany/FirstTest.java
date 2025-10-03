@@ -39,57 +39,27 @@ public class FirstTest extends CoreTestCase {
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
 
-        List<WebElement> searchResults = MainPageObject.waitForListElementsPresent(
-                By.id("org.wikipedia:id/page_list_item_title"),
-                "cannot find search results",
-                10
-        );
+        List<WebElement> searchResults = SearchPageObject.waitForListElementSearchResult();
 
         assertFalse(searchResults.isEmpty(),
                "Search results should not be empty" );
         assertTrue(searchResults.size()>1,
         "search results<1");
 
-        MainPageObject.waitForElementAndClear(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-                "cannot find search input",
-                10
-        );
-
-        MainPageObject.waitForElementNotPresent(
-                By.xpath("//androidx.recyclerview.widget.RecyclerView[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup[1]"),
-                "search results are still present on the page",
-                10
-        );
+        SearchPageObject.waitForClearSearchResult();
+        SearchPageObject.searchResultIsNotPresent();
 
     }
 
     @Test //ДЗ Ex4 Тест проверка слов в поиске
     public void testFindSearchResult() {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-                "Cannot find Search Wikipedia input",
-                5
-        );
+        SearchPageObject.skipOnboarding();
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("Java");
 
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-                "java",
-                "cannot find search input",
-                15
-        );
-
-        List<WebElement> searchResults = MainPageObject.waitForListElementsPresent(
-                By.id("org.wikipedia:id/page_list_item_title"),
-                "cannot find search results",
-                10
-        );
+        List<WebElement> searchResults = SearchPageObject.waitForListElementSearchResult();
 
         String searchWord = "Java";
 
@@ -102,108 +72,40 @@ public class FirstTest extends CoreTestCase {
 
     }
 
-
-
-
-
-    
     @Test //ДЗ Ex6 Тест assert title
     public void testArticleTitleIsPresent()
     {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-                "Cannot find Search Wikipedia input",
-                5
-        );
+        SearchPageObject.skipOnboarding();
+        SearchPageObject.initSearchInput();
 
         String search_line = "java";
 
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath("//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']"),
-                search_line,
-                "cannot find search input",
-                30
-        );
+        SearchPageObject.typeSearchLine(search_line);
+        SearchPageObject.waitForSearchResult("Object-oriented programming language");
+        SearchPageObject.waitForCancelButtonToAppear();
+        SearchPageObject.clickCancelSearch();
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']"),
-                "Cannot find 'Object-oriented programming language' topic searching by" + search_line,
-                30
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/closeButton"),
-                "Cannot find close Button",
-                30
-        );
-
-        MainPageObject.assertElementPresent(
-                By.xpath("//android.widget.TextView[@text='Java (programming language)']"),
-                "Cannot find title of article",
-                30);
-
-
+        SearchPageObject.assertThereIsHaveResultOfSearch();
     }
 
     @Test
     public void testSaveTwoArticleToMyList() //ДЗ Ex5 Тест сохранение двух статей.txt
     {
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.Button[@resource-id='org.wikipedia:id/fragment_onboarding_skip_button']"),
-                "Cannot skip onboarding",
-                5
-        );
+        SearchPageObject SearchPageObject = new SearchPageObject(driver);
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.TextView[@text='Search Wikipedia']"),
-                "Cannot find Search Wikipedia input",
-                30
-        );
+        SearchPageObject.skipOnboarding();
+        SearchPageObject.initSearchInput();
+        SearchPageObject.typeSearchLine("java");
+        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
 
-        String search_input = "//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']";
+        ArticlePageObject ArticlePageObject = new ArticlePageObject(driver);
 
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath(search_input),
-                "Java",
-                "cannot find search input",
-                15
-        );
-
-        String java_article_search_result = "//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='Object-oriented programming language']";
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath(java_article_search_result),
-                "Cannot find Search Wikipedia input",
-                30
-        );
-
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/closeButton"),
-                "Cannot find close Button",
-                30
-        );
-
-        String java_article_title = "//android.widget.TextView[@text='Java (programming language)']";
-
-        MainPageObject.waitForElementPresent(
-                By.xpath(java_article_title),
-                "Cannot find article title",
-                15
-        );
-
-        String save_button = "//android.widget.TextView[@content-desc='Save']";
-
-        MainPageObject.waitForElementAndClick(
-                By.xpath(save_button),
-                "Cannot find button to save article",
-                5
-        );
+        ArticlePageObject.skipArticleOnboarding();
+        ArticlePageObject.waitForTitleElement();
+        String name_of_folder = "Learning programming";
+        ArticlePageObject.addArticleToMyList(name_of_folder);
 
         MainPageObject.waitForElementAndClick(
                 By.id("org.wikipedia:id/page_toolbar_button_search"),

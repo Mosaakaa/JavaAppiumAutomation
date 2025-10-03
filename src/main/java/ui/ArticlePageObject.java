@@ -15,7 +15,8 @@ public class ArticlePageObject extends MainPageObject
             SNACKBAR_BUTTON = "org.wikipedia:id/snackbar_action",
             ADD_TO_MY_LIST_OVERLAY = "//*[@text='Got it']",
             MY_LIST_NAME_INPUT = "org.wikipedia:id/text_input",
-            MY_LIST_OK_BUTTON = "//android.widget.Button[@resource-id='android:id/button1']";
+            MY_LIST_OK_BUTTON = "//android.widget.Button[@resource-id='android:id/button1']",
+            SEARCH_INIT_ELEMENT_FROM_ARTICLE = "org.wikipedia:id/page_toolbar_button_search";
 
     public ArticlePageObject(AppiumDriver driver)
     {
@@ -85,5 +86,11 @@ public class ArticlePageObject extends MainPageObject
                 "Cannot find close button",
                 10
         );
+    }
+
+    public void initSearchInputFromArticle()
+    {
+        this.waitForElementPresent(By.xpath(SEARCH_INIT_ELEMENT_FROM_ARTICLE), "Cannot find search input after clicking search init element");
+        this.waitForElementAndClick(By.xpath(SEARCH_INIT_ELEMENT_FROM_ARTICLE), "Cannot Find and click search init element", 15);
     }
 }
