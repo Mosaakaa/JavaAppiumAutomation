@@ -175,13 +175,17 @@ public class MainPageObject {
         }
     }
 
-    private WebElement assertElementHasText(By by, String expected_text, String error_message, long timeoutInSeconds) {
+    private WebElement assertElementHasText(By by, String expected_text, String error_message, long timeoutInSeconds)
+    {
         WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
         String expectedText = element.getAttribute("text");
 
         if (!Objects.equals(expectedText, expected_text)) {
             String default_message = "An element '" + by.toString() + "' has not expected text";
             throw new AssertionError(default_message + " " + error_message);
+
+
+        }
 
         return element;
     }

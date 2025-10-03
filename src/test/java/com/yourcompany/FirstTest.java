@@ -104,21 +104,10 @@ public class FirstTest extends CoreTestCase {
 
         ArticlePageObject.skipArticleOnboarding();
         ArticlePageObject.waitForTitleElement();
+        String java_article_title = ArticlePageObject.getArticleTitle();
         String name_of_folder = "Learning programming";
         ArticlePageObject.addArticleToMyList(name_of_folder);
-
-        MainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/page_toolbar_button_search"),
-                "Cannot find Search Wikipedia input on article page",
-                15
-        );
-
-        MainPageObject.waitForElementAndSendKeys(
-                By.xpath(search_input),
-                "appium",
-                "Cannot find Search Wikipedia input on article page",
-                30
-        );
+        ArticlePageObject.SearchFromArticle();
 
         String appium_article_search_result = "//android.widget.TextView[@resource-id='org.wikipedia:id/page_list_item_description' and @text='Automation for Apps']";
 

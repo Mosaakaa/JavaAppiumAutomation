@@ -16,7 +16,8 @@ public class ArticlePageObject extends MainPageObject
             ADD_TO_MY_LIST_OVERLAY = "//*[@text='Got it']",
             MY_LIST_NAME_INPUT = "org.wikipedia:id/text_input",
             MY_LIST_OK_BUTTON = "//android.widget.Button[@resource-id='android:id/button1']",
-            SEARCH_INIT_ELEMENT_FROM_ARTICLE = "org.wikipedia:id/page_toolbar_button_search";
+            SEARCH_INIT_ELEMENT_FROM_ARTICLE = "org.wikipedia:id/page_toolbar_button_search",
+            SEARCH_INPUT = "//android.widget.AutoCompleteTextView[@resource-id='org.wikipedia:id/search_src_text']";
 
     public ArticlePageObject(AppiumDriver driver)
     {
@@ -88,9 +89,10 @@ public class ArticlePageObject extends MainPageObject
         );
     }
 
-    public void initSearchInputFromArticle()
+    public void SearchFromArticle()
     {
         this.waitForElementPresent(By.xpath(SEARCH_INIT_ELEMENT_FROM_ARTICLE), "Cannot find search input after clicking search init element");
         this.waitForElementAndClick(By.xpath(SEARCH_INIT_ELEMENT_FROM_ARTICLE), "Cannot Find and click search init element", 15);
+        this.waitForElementAndSendKeys(By.xpath(SEARCH_INPUT), "appium", "Cannot find search init element", 15);
     }
 }
