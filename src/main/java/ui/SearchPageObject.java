@@ -17,7 +17,8 @@ public class SearchPageObject extends MainPageObject{
             SEARCH_RESULT_BY_SUBSTRING_TPL = "//*[@resource-id='org.wikipedia:id/search_results_list']//*[@text='{SUBSTRING}']",
             SEARCH_RESULT_ELEMENT = "//*[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup",
             SEARCH_EMPTY_RESULT_ELEMENT = "//androidx.recyclerview.widget.RecyclerView[@resource-id='org.wikipedia:id/search_results_list']/android.view.ViewGroup",
-            SEARCH_RESULT_TITLE = "org.wikipedia:id/page_list_item_title";
+            SEARCH_RESULT_TITLE = "org.wikipedia:id/page_list_item_title",
+            SEARCH_RESULT_FORE_SAVE = "//android.widget.TextView[@resource-id='org.wikipedia:id/page_list_item_description' and @text='Automation for Apps']";
 
     public SearchPageObject(AppiumDriver driver)
     {
@@ -127,5 +128,10 @@ public class SearchPageObject extends MainPageObject{
                 "search results are still present on the page",
                 10
         );
+    }
+
+    public void clickByArticle()
+    {
+        this.waitForElementAndClick(By.xpath(SEARCH_RESULT_FORE_SAVE),"Cannot find and click search result", 10);
     }
 }

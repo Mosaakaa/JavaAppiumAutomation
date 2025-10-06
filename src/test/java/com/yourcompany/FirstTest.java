@@ -109,15 +109,9 @@ public class FirstTest extends CoreTestCase {
         ArticlePageObject.addArticleToMyList(name_of_folder);
         ArticlePageObject.SearchFromArticle();
 
-        String appium_article_search_result = "//android.widget.TextView[@resource-id='org.wikipedia:id/page_list_item_description' and @text='Automation for Apps']";
+        SearchPageObject.clickByArticle();
 
-        MainPageObject.waitForElementAndClick(
-                By.xpath(appium_article_search_result),
-                "Cannot find Search Wikipedia input",
-                30
-        );
-
-        String appium_article_title = "(//android.widget.TextView[@text='Appium'])[1]";
+        String appium_article_title = ArticlePageObject.getArticleTitle();;
 
         MainPageObject.waitForElementPresent(
                 By.xpath(appium_article_title),
